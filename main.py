@@ -89,44 +89,44 @@ def task_2_step(message):
 
 @bot.message_handler(func=lambda message: message.text == 'Задание 3')
 def task3_handler(message):
-    # Ваш код для задания 3
-    pass
+    markup = telebot.types.ReplyKeyboardMarkup(row_width=2)
+    item_manual = telebot.types.KeyboardButton('1. Ввод вручную')
+    item_auto = telebot.types.KeyboardButton('2. Генерация автоматически')
+    markup.add(item_manual, item_auto)
+
+    msg = bot.send_message(message.chat.id, "Выберите способ заполнения массивов:", reply_markup=markup)
+    bot.register_next_step_handler(msg, task_3_step)
+
+def task_3_step(message):
+    if message.text == '1':
+        arr1 = parse_input(input("Введите первый массив чисел через пробел: "))
+        arr2 = parse_input(input("Введите второй массив чисел через пробел: "))
+        arr3 = parse_input(input("Введите третий массив чисел через пробел: "))
+        if len(arr1) != len(arr2) or len(arr1) != len(arr3):
+            bot.send_message(message.chat.id, "Массивы разной длины. Введите массивы одной длины.")
+            return
+    elif message.text == '2':
+        n = int(input('Введите количество элементов массива: '))
+        arr1 = generate(n)
+        arr2 = generate(n)
+        arr3 = generate(n)
+        bot.send_message(message.chat.id, f'Массив 1:\n{arr1}\nМассив 2:\n{arr2}\nМассив 3:\n{arr3}')
+    else:
+        bot.send_message(message.chat.id, "Неверный выбор. Пожалуйста, выберите пункт меню 1 или 2.")
+        return
+
+    for i in range(len(arr1)):
+        if arr1[i] == arr2[i] + arr3[i] or arr2[i] == arr1[i] + arr3[i] or arr3[i] == arr1[i] + arr2[i]:
+            bot.send_message(message.chat.id,
+                             f"Можно получить {arr3[i]} из {arr2[i]} и {arr1[i]} арифметическими преобразованиями")
+        else:
+            bot.send_message(message.chat.id,
+                             f"Нельзя получить {arr3[i]} из {arr2[i]} и {arr1[i]} арифметическими преобразованиями")
 
 # Обработка кнопки завершения программы
 @bot.message_handler(func=lambda message: message.text == 'Завершить программу')
 def exit_program(message):
     bot.send_message(message.chat.id, 'Программа завершена.')
-
-    """
-@bot.message_handler(commands=['1'])
-def One(message):
-    bot.send_message(message.chat.id, "Введите первый массив чисел через пробел: ")
-    @bot.message_handler()
-    def Massiv1(massiv):
-        arr1 = str(massiv.text)
-        bot.send_message(message.chat.id, "Введите второй массив чисел через пробел: ")
-        @bot.message_handler()
-        def Massiv2(mass):
-            arr2 = str(mass.text)
-            if len(arr1) != len(arr2):
-                bot.send_message(message.chat.id, "Массивы разной длины. Введите массивы одной длины.")
-            return arr2
-        return arr1
-    result = [int(arr1[i]) + int(arr2[i]) if int(arr1[i]) != int(arr2[i]) else 0 for i in range(len(arr1))]
-    bot.send_message(message.chat.id, f"Результат: {sorted(result)} \nПервый массив, отсортированный по убыванию: {sorted(arr1, reverse=True)}\nВторой массив, отсортированный по возрастанию: {sorted(arr2)}")
-"""
-@bot.message_handler(commands=['2'])
-def Two(message):
-    bot.send_message(message.chat.id, 'Введите количество элементов массива: ')
-    @bot.message_handler()
-    def Elements(message):
-        length = int(message.text)
-
-        arr1 = generate(length)
-        arr2 = generate(length)
-
-        result = [int(arr1[i]) + int(arr2[i]) if int(arr1[i]) != int(arr2[i]) else 0 for i in range(len(arr1))]
-        bot.send_message(message.chat.id, f'Массив 1:\n{arr1}\nМассив 2:\n{arr2}\nРезультат:\n{sorted(result)} \nПервый массив, отсортированный по убыванию: \n{sorted(arr1, reverse=True)}\nВторой массив, отсортированный по возрастанию: \n{sorted(arr2)}')
 
 
 # Функция для генерации массива случайных чисел
