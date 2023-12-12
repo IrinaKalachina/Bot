@@ -1,19 +1,16 @@
 import telebot
 import random
-from telebot import types
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 bot = telebot.TeleBot('6328250333:AAG9FEq5BmU39qPkoAmmuj1x7_ag0yGcHuw')
 
-@bot.message_handler(commands=['start', 'menu'])
-def start(message):
-    markup = types.ReplyKeyboardMarkup('')
-    b1 = types.KeyboardButton('1 Задание', )
-    markup.row(b1)
-    b2 = types.KeyboardButton('2 Задание', )
-    markup.row(b2)
-    b3 = types.KeyboardButton('3 Задание', )
-    markup.row(b3)
-    bot.send_message(message.chat.id,'Здравствуйте!\n\nВыберите номер задания для выполнения:1,2 или 3', reply_markup=markup)
+keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard.add(KeyboardButton('Выбор задания'))
+keyboard.add(KeyboardButton('Завершить программу'))
+
+@bot.message_handler(commands=['start'])
+def show_menu(message):
+    bot.send_message(message.chat.id, 'Главное меню:', reply_markup=keyboard)
 
 @bot.message_handler(commands=['command1'])
 def First(message):
