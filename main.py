@@ -12,10 +12,33 @@ keyboard.add(KeyboardButton('Завершить программу'))
 def show_menu(message):
     bot.send_message(message.chat.id, 'Главное меню:', reply_markup=keyboard)
 
-@bot.message_handler(commands=['command1'])
-def First(message):
-    bot.send_message(message.chat.id, "\nЗадание 1\n\nНахождение суммы чисел из массивов, сортировка массивов\n\n1. Ввод массивов вручную\n2. Генерация массивов автоматически\nВыберите действие: ")
+@bot.message_handler(func=lambda message: message.text == 'Выбор задания')
+def show_task_menu(message):
+    keyboard_tasks = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard_tasks.add(KeyboardButton('Задание 1'))
+    keyboard_tasks.add(KeyboardButton('Задание 2'))
+    keyboard_tasks.add(KeyboardButton('Задание 3'))
+    bot.send_message(message.chat.id, 'Выберите задание:', reply_markup=keyboard_tasks)
 
+@bot.message_handler(func=lambda message: message.text == 'Задание 1')
+def task1_handler(message):
+    # Ваш код для задания 1
+    pass
+
+@bot.message_handler(func=lambda message: message.text == 'Задание 2')
+def task2_handler(message):
+    # Ваш код для задания 2
+    pass
+
+@bot.message_handler(func=lambda message: message.text == 'Задание 3')
+def task3_handler(message):
+    # Ваш код для задания 3
+    pass
+
+# Обработка кнопки завершения программы
+@bot.message_handler(func=lambda message: message.text == 'Завершить программу')
+def exit_program(message):
+    bot.send_message(message.chat.id, 'Программа завершена.')
 
     """
 @bot.message_handler(commands=['1'])
