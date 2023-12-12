@@ -22,8 +22,33 @@ def show_task_menu(message):
 
 @bot.message_handler(func=lambda message: message.text == 'Задание 1')
 def task1_handler(message):
-    # Ваш код для задания 1
-    pass
+    markup = telebot.types.ReplyKeyboardMarkup(row_width=2)
+    item_manual = telebot.types.KeyboardButton('1. Ввод вручную')
+    item_auto = telebot.types.KeyboardButton('2. Генерация автоматически')
+    markup.add(item_manual, item_auto)
+
+    msg = bot.send_message(message.chat.id, "Выберите способ заполнения массивов:", reply_markup=markup)
+    bot.register_next_step_handler(msg, task_1_step)
+
+def task_1_step(message):
+    if message.text == '1':
+        arr1 = parse_input(input("Введите первый массив чисел через пробел: "))
+        arr2 = parse_input(input("Введите второй массив чисел через пробел: "))
+        if len(arr1) != len(arr2):
+            bot.send_message(message.chat.id, "Массивы разной длины. Введите массивы одной длины.")
+            return
+    elif message.text == '2':
+        n = int(input('Введите количество элементов массива: '))
+        arr1 = generate(n)
+        arr2 = generate(n)
+        bot.send_message(message.chat.id, f'Массив 1:\n{arr1}\nМассив 2:\n{arr2}')
+    else:
+        bot.send_message(message.chat.id, "Неверный выбор. Пожалуйста, выберите пункт меню 1 или 2.")
+        return
+
+    result = [arr1[i] + arr2[i] if arr1[i] != arr2[i] else 0 for i in range(len(arr1))]
+    bot.send_message(message.chat.id,
+                     f"Результат:\n{sorted(result)}\nПервый массив, отсортированный по убыванию:\n{sorted(arr1, reverse=True)}\nВторой массив, отсортированный по возрастанию:\n{sorted(arr2)}")
 
 @bot.message_handler(func=lambda message: message.text == 'Задание 2')
 def task2_handler(message):
@@ -73,7 +98,10 @@ def Two(message):
 
 
 # Функция для генерации массива случайных чисел
-generate = lambda length: [random.randint(1, 100) for _ in range(length)]
+generate = lambda length: [random.randint(1, 100) for _ in range(length)]  # Включение в последовательность
+
+# Преобразование строки в список целых чисел
+parse_input = lambda input_str: list(map(int, input_str.split()))
 
 if __name__ == "__main__":
     bot.polling(none_stop=True)
