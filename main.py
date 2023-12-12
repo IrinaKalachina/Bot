@@ -52,8 +52,40 @@ def task_1_step(message):
 
 @bot.message_handler(func=lambda message: message.text == 'Задание 2')
 def task2_handler(message):
-    # Ваш код для задания 2
-    pass
+    markup = telebot.types.ReplyKeyboardMarkup(row_width=2)
+    item_manual = telebot.types.KeyboardButton('1. Ввод вручную')
+    item_auto = telebot.types.KeyboardButton('2. Генерация автоматически')
+    markup.add(item_manual, item_auto)
+
+    msg = bot.send_message(message.chat.id, "Выберите способ заполнения массивов:", reply_markup=markup)
+    bot.register_next_step_handler(msg, task_2_step)
+
+def task_2_step(message):
+    if message.text == '1':
+        arr1 = parse_input(input("Введите первый массив чисел через пробел: "))
+        arr2 = parse_input(input("Введите второй массив чисел через пробел: "))
+        arr3 = parse_input(input("Введите третий массив чисел через пробел: "))
+        if len(arr1) != len(arr2) or len(arr1) != len(arr3):
+            bot.send_message(message.chat.id, "Массивы разной длины. Введите массивы одной длины.")
+            return
+    elif message.text == '2':
+        n = int(input('Введите количество элементов массива: '))
+        arr1 = generate(n)
+        arr2 = generate(n)
+        arr3 = generate(n)
+        bot.send_message(message.chat.id, f'Массив 1:\n{arr1}\nМассив 2:\n{arr2}\nМассив 3:\n{arr3}')
+    else:
+        bot.send_message(message.chat.id, "Неверный выбор. Пожалуйста, выберите пункт меню 1 или 2.")
+        return
+
+    for i in range(len(arr1)):
+        if arr1[i] + arr2[i] == arr3[i]:
+            min_num = min(arr1[i], arr2[i])
+            result = (arr1[i] + arr2[i] + arr3[i]) ** min_num
+            bot.send_message(message.chat.id,
+                             f"Для чисел {arr1[i]} и {arr2[i]} сумма возводится в степень {min_num}: {result}")
+        else:
+            bot.send_message(message.chat.id, f"Для чисел {arr1[i]} и {arr2[i]} сумма не равна {arr3[i]}")
 
 @bot.message_handler(func=lambda message: message.text == 'Задание 3')
 def task3_handler(message):
